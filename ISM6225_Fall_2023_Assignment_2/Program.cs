@@ -10,8 +10,7 @@ using System.Text;
 
 namespace ISM6225_Fall_2023_Assignment_2
 {
-    class Program
-    {
+    class Program    {
         static void Main(string[] args)
         {
             //Question 1:
@@ -109,19 +108,36 @@ namespace ISM6225_Fall_2023_Assignment_2
         */
 
         public static IList<IList<int>> FindMissingRanges(int[] nums, int lower, int upper)
+         {
+        try
         {
-            try
-            {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<IList<int>>();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            IList<IList<int>> result = new List<IList<int>>();
+            long prev = (long)lower - 1; // To handle potential integer overflow when finding the missing ranges
 
+            for (int i = 0; i <= nums.Length; i++)
+            {
+                long curr = (i == nums.Length) ? (long)upper + 1 : nums[i]; // To handle the upper range case
+
+                if (prev + 1 <= curr - 1)
+                {
+                    if (prev + 1 == curr - 1)
+                    {
+                        result.Add(new List<int> { (int)(prev + 1) }); // If the range is just a single number
+                    }
+                    else
+                    {
+                        result.Add(new List<int> { (int)(prev + 1), (int)(curr - 1) }); // If the range has a start and end value
+                    }
+                }
+                prev = curr;
+            }
+            return result;
         }
-
+        catch (Exception)
+        {
+            throw;
+        }
+    }
         /*
          
         Question 2
@@ -152,18 +168,33 @@ namespace ISM6225_Fall_2023_Assignment_2
         Time complexity:O(n^2), space complexity:O(1)
         */
 
-        public static bool IsValid(string s)
+       
+    public static bool IsValid(string s)
+{
+    try
+    {
+        // Check if the length of the input string is odd
+        if (s.Length % 2 != 0)
         {
-            try
-            {
-                // Write your code here and you can modify the return value according to the requirements
-                return s.Length == 0;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return false; // If the length is odd, the string cannot be valid, so return false
         }
+
+        // Loop until there are no more occurrences of '()', '[]', or '{}'
+        while (s.Contains("()") || s.Contains("[]") || s.Contains("{}"))
+        {
+            // Replace '()', '[]', and '{}' with an empty string to eliminate valid pairs
+            s = s.Replace("()", "").Replace("[]", "").Replace("{}", "");
+        }
+
+        // If the string length becomes 0 after removing valid pairs, it is a valid string
+        return s.Length == 0;
+    }
+    catch (Exception)
+    {
+        throw; // If any exception occurs during the execution, rethrow the exception
+    }
+}
+
 
         /*
 
@@ -188,15 +219,28 @@ namespace ISM6225_Fall_2023_Assignment_2
         */
 
         public static int MaxProfit(int[] prices)
-        {
+        { 
+            
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 1;
+                if (prices.Length == 0) // handling empty array case
+                    return 0;
+
+                int minPrice = prices[0]; // initializing the minimum price as the first price
+                int maxProfit = 0; // initializing max profit as 0
+
+                for (int i = 1; i < prices.Length; i++)
+                {
+                    if (prices[i] < minPrice) // update the minimum price if a smaller price is encountered
+                        minPrice = prices[i];
+                    else if (prices[i] - minPrice > maxProfit) // calculate and update the max profit if a better option is found
+                        maxProfit = prices[i] - minPrice;
+                }
+                return maxProfit; // return the maximum profit
             }
             catch (Exception)
             {
-                throw;
+                throw; // handling exceptions with try-catch block
             }
         }
 
@@ -224,19 +268,48 @@ namespace ISM6225_Fall_2023_Assignment_2
 
         Time complexity:O(n), space complexity:O(1)
         */
+public static bool IsStrobogrammatic(string s)
+{
+    try
+    {
+        // Initialize two pointers for checking characters from the two ends
+        int left = 0;
+        int right = s.Length - 1;
 
-        public static bool IsStrobogrammatic(string s)
+        // Iterate through the string until the pointers meet in the middle
+        while (left <= right)
         {
-            try
+            // Checking for invalid combinations that cannot be part of a strobogrammatic number
+            if (!("00 11 88 696".Contains(s[left].ToString() + s[right])))
             {
-                // Write your code here and you can modify the return value according to the requirements
                 return false;
             }
-            catch (Exception)
+
+            // Checking for mirror image conditions for 6 and 9
+            if (s[left] == '6' && s[right] != '9' || s[left] == '9' && s[right] != '6')
             {
-                throw;
+                return false;
             }
+
+            // Checking for exactly same conditions for 0, 1, and 8
+            if (s[left] == '0' && s[right] != '0' || s[left] == '1' && s[right] != '1' || s[left] == '8' && s[right] != '8')
+            {
+                return false;
+            }
+
+            // Move the pointers towards each other
+            left++;
+            right--;
         }
+
+        // If all checks pass, the string is strobogrammatic
+        return true;
+    }
+    catch (Exception)
+    {
+        throw;
+    }
+}
 
         /*
 
@@ -267,18 +340,35 @@ namespace ISM6225_Fall_2023_Assignment_2
 
         */
 
-        public static int NumIdenticalPairs(int[] nums)
+      public static int NumIdenticalPairs(int[] nums)
+{
+    try
+    {
+        // Check if the array is null or has less than 2 elements
+        if (nums == null || nums.Length < 2)
         {
-            try
-            {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return 0; // If the array has less than 2 elements, there can be no pairs
         }
+
+        int count = 0;
+        int[] frequency = new int[101]; // As per the constraint, the maximum value of nums[i] is 100
+
+        // Loop through the array to count the frequency of each element and calculate the number of good pairs
+        foreach (var num in nums)
+        {
+            count += frequency[num]; // Increment count by the frequency of the current number
+            frequency[num]++; // Update the frequency array
+        }
+
+        return count; // Return the total count of good pairs
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("An error occurred: " + ex.Message); // Print an error message if an exception occurs
+        throw; // Rethrow the exception
+    }
+}
+
 
         /*
         Question 6
@@ -317,19 +407,45 @@ namespace ISM6225_Fall_2023_Assignment_2
         Time complexity:O(nlogn), space complexity:O(n)
         */
 
+       
         public static int ThirdMax(int[] nums)
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                if (nums.Length < 3)
+                {
+                    Array.Sort(nums); // Sort the array in ascending order
+                    return nums[nums.Length - 1]; // If the length is less than 3, return the maximum number
+                }
+
+                Array.Sort(nums); // Sort the array in ascending order
+                Array.Reverse(nums); // Reverse the array to get it in descending order
+
+                int distinctCount = 1;
+                int thirdMax = nums[0];
+
+                for (int i = 1; i < nums.Length; i++)
+                {
+                    if (nums[i] != nums[i - 1])
+                    {
+                        distinctCount++; // Increase the distinct count if a new distinct number is found
+                    }
+
+                    if (distinctCount == 3)
+                    {
+                        thirdMax = nums[i]; // Store the third distinct maximum number
+                        break;
+                    }
+                }
+
+                return distinctCount < 3 ? nums[0] : thirdMax; // Return the third maximum if it exists, otherwise return the maximum
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine("An error occurred: " + ex.Message); // Print an error message if an exception occurs
+                throw; // Rethrow the exception
             }
         }
-
         /*
         
         Question 7:
@@ -350,15 +466,28 @@ namespace ISM6225_Fall_2023_Assignment_2
         Timecomplexity:O(n), Space complexity:O(n)
         */
 
-        public static IList<string> GeneratePossibleNextMoves(string currentState)
+             public static IList<string> GeneratePossibleNextMoves(string currentState)
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<string>() { };
+                IList<string> result = new List<string>();
+
+                for (int i = 0; i < currentState.Length - 1; i++)
+                {
+                    if (currentState[i] == '+' && currentState[i + 1] == '+')
+                    {
+                        char[] currentStateArray = currentState.ToCharArray();
+                        currentStateArray[i] = '-';
+                        currentStateArray[i + 1] = '-';
+                        result.Add(new string(currentStateArray));
+                    }
+                }
+
+                return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine("An error occurred: " + ex.Message);
                 throw;
             }
         }
@@ -381,10 +510,32 @@ namespace ISM6225_Fall_2023_Assignment_2
         Timecomplexity:O(n), Space complexity:O(n)
         */
 
-        public static string RemoveVowels(string s)
+          public static string RemoveVowels(string s)
         {
-            // Write your code here and you can modify the return value according to the requirements
-            return "";
+            try
+            {
+                // Check if the string is null or empty
+                if (string.IsNullOrEmpty(s))
+                {
+                    return ""; // Return an empty string if the input string is null or empty
+                }
+
+                // Remove the vowels 'a', 'e', 'i', 'o', and 'u' from the string
+                string result = "";
+                foreach (char c in s)
+                {
+                    if (!"aeiou".Contains(c))
+                    {
+                        result += c;
+                    }
+                }
+                return result; // Return the new string with vowels removed
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred: " + ex.Message); // Print an error message if an exception occurs
+                throw; // Rethrow the exception
+            }
         }
 
         /* Inbuilt Functions - Don't Change the below functions */
