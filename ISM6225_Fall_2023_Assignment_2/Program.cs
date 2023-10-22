@@ -465,32 +465,40 @@ public static bool IsStrobogrammatic(string s)
 
         Timecomplexity:O(n), Space complexity:O(n)
         */
+public static IList<string> GeneratePossibleNextMoves(string currentState)
+{
+    try
+    {
+        IList<string> result = new List<string>();
 
-             public static IList<string> GeneratePossibleNextMoves(string currentState)
+        // Iterate through the string to find valid moves
+        for (int i = 0; i < currentState.Length - 1; i++)
         {
-            try
+            // Check if the current and next characters are both '+'
+            if (currentState[i] == '+' && currentState[i + 1] == '+')
             {
-                IList<string> result = new List<string>();
+                // Convert the string to a character array to manipulate it
+                char[] currentStateArray = currentState.ToCharArray();
 
-                for (int i = 0; i < currentState.Length - 1; i++)
-                {
-                    if (currentState[i] == '+' && currentState[i + 1] == '+')
-                    {
-                        char[] currentStateArray = currentState.ToCharArray();
-                        currentStateArray[i] = '-';
-                        currentStateArray[i + 1] = '-';
-                        result.Add(new string(currentStateArray));
-                    }
-                }
+                // Replace the consecutive "++" with "--"
+                currentStateArray[i] = '-';
+                currentStateArray[i + 1] = '-';
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("An error occurred: " + ex.Message);
-                throw;
+                // Add the modified string to the result list
+                result.Add(new string(currentStateArray));
             }
         }
+
+        // Return the list of possible next moves
+        return result;
+    }
+    catch (Exception ex)
+    {
+        // If an error occurs, print the error message and rethrow the exception
+        Console.WriteLine("An error occurred: " + ex.Message);
+        throw;
+    }
+}
 
         /*
 
